@@ -3,10 +3,10 @@
 
 #include <Arduino.h>
 
-#define SMA_SIZE 5
-
 class AnalogIn {
 public:
+  static constexpr uint8_t DEFAULT_SMA_SIZE = 5;
+
   explicit AnalogIn(uint8_t pin)
     : _pin(pin), _sampleIndex(0), _bufferFilled(false) {}
 
@@ -23,7 +23,7 @@ public:
 
     int first = analogRead(_pin);
     _lastRaw = first;
-    for (int i = 0; i < SMA_SIZE; i++) {
+    for (int i = 0; i < DEFAULT_SMA_SIZE; i++) {
       _samples[i] = first;
     }
     _bufferFilled = true;
@@ -32,7 +32,7 @@ public:
   virtual void update() {
     _lastRaw = analogRead(_pin);
     _samples[_sampleIndex] = _lastRaw;
-    _sampleIndex = (_sampleIndex + 1) % SMA_SIZE;
+    _sampleIndex = (_sampleIndex + 1) % DEFAULT_SMA_SIZE;
     if (_sampleIndex == 0) _bufferFilled = true;
   }
 
@@ -51,7 +51,7 @@ public:
 
   virtual int readSmoothed() const {
     long sum = 0;
-    uint8_t count = _bufferFilled ? SMA_SIZE : _sampleIndex;
+    uint8_t count = _bufferFilled ? DEFAULT_SMA_SIZE : _sampleIndex;
 
     for (uint8_t i = 0; i < count; i++) {
       sum += _samples[i];
@@ -77,7 +77,7 @@ protected:
   unsigned int _scaleADC = 1023;
 
   int _lastRaw;
-  int _samples[SMA_SIZE];
+  int _samples[DEFAULT_SMA_SIZE];
   uint8_t _sampleIndex = 0;
   bool _bufferFilled = false;
 
