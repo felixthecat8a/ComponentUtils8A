@@ -139,7 +139,7 @@ public:
 
   int getRawInput() const { return readRaw(); }
   float getNormalized() const { return readNormalizedSmoothed(); }
-  float getVoltage() const { return getSmoothedNormalized() * _vRef; }
+  float getVoltage() const { return readNormalizedSmoothed() * _vRef; }
   float getPercentage() const { return readNormalizedSmoothed() * 100.0f; }
 
   float estimateLux() const {
