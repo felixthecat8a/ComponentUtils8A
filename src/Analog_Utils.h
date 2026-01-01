@@ -94,7 +94,7 @@ protected:
 
 class Knob_Utils : public AnalogIn {
 public:
-  Knob_Utils(uint8_t pin) : AnalogIn(pin) {}
+  Knob_Utils(uint8_t pin, float vRef = 5.0) : AnalogInput(pin), _vRef(vRef) {}
 
   void begin(int resolutionADC = 10) override {
       AnalogIn::begin(resolutionADC);
@@ -117,6 +117,9 @@ public:
   float getAngle(float maxDegrees = 270.0f) const {
     return readNormalizedSmoothed() * maxDegrees;
   }
+
+  private:
+    float _vRef;
 };
 
 /* GND >> 10kohm Resistor >> A1 >> Photoresistor >> 5V */
