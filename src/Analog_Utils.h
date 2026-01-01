@@ -94,7 +94,7 @@ protected:
 
 class Knob_Utils : public AnalogIn {
 public:
-  Knob_Utils(uint8_t pin, float vRef = 5.0) : AnalogInput(pin), _vRef(vRef) {}
+  Knob_Utils(uint8_t pin, float vRef = 5.0) : AnalogIn(pin), _vRef(vRef) {}
 
   void begin(int resolutionADC = 10) override {
       AnalogIn::begin(resolutionADC);
