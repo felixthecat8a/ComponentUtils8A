@@ -173,7 +173,7 @@ public:
 
   int getRawInput() const { return readRaw(); }
   float getNormalized() const { return readNormalizedSmoothed(); }
-  float getVoltage() const { return getSmoothedNormalized() * _vRef; }
+  float getVoltage() const { return readNormalizedSmoothed() * _vRef; }
 
   float getKelvin() {
     float resistance = _readResistance();
@@ -242,11 +242,11 @@ class Phototransistor_Utils : public AnalogIn {
     }
 
     float getLevel() const {
-      return (getSmoothedVoltage() * _cal.scale) + _cal.offset;
+      return (getVoltage() * _cal.scale) + _cal.offset;
     }
 
     float getPercentage() const {
-      return (getSmoothedVoltage() / _vRef) * 100.0f;
+      return (getVoltage() / _vRef) * 100.0f;
     }
 
     void setCalibration(float scale, float offset = 0.0f) {
