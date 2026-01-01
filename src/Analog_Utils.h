@@ -105,15 +105,11 @@ public:
   }
 
   int getRawInput() const { return readRaw(); }
-  float getVoltage() const { return readNormalized(); }
-  float getSmoothedVoltage() const { return readNormalizedSmoothed(); }
-  float getPercentage() const { return readNormalized() * 100.0f; }
+  float getNormalized() const { return readNormalizedSmoothed(); }
+  float getVoltage() const { return readNormalizedSmoothed() * _vRef; }
+  float getPercentage() const { return readNormalizedSmoothed() * 100.0f; }
 
   int mapTo(int minOut, int maxOut) const {
-    return readMapped(minOut, maxOut);
-  }
-
-  int mapToSmoothed(int minOut, int maxOut) const {
     return readMappedSmoothed(minOut, maxOut);
   }
 
@@ -139,15 +135,12 @@ public:
   }
 
   int getRawInput() const { return readRaw(); }
-  float getNormalized() const { return readNormalized(); }
-  float getSmoothedNormalized() const { return readNormalizedSmoothed(); }
-
-  float getVoltage() const { return getNormalized() * _vRef; }
-  float getSmoothedVoltage() const { return getSmoothedNormalized() * _vRef; }
-  float getPercentage() const { return getNormalized() * 100.0f; }
+  float getNormalized() const { return readNormalizedSmoothed(); }
+  float getVoltage() const { return getSmoothedNormalized() * _vRef; }
+  float getPercentage() const { return readNormalizedSmoothed() * 100.0f; }
 
   float estimateLux() const {
-    float voltage = getSmoothedVoltage();
+    float voltage = getVoltage();
     if (voltage <= 0.0f) return 0.0f;
     float resistance = _rFixed * ((_vRef / voltage) - 1.0f);
     float r_kOhm = resistance / 1000.0f;
@@ -176,11 +169,8 @@ public:
   }
 
   int getRawInput() const { return readRaw(); }
-  float getNormalized() const { return readNormalized(); }
-  float getSmoothedNormalized() const { return readNormalizedSmoothed(); }
-
-  float getVoltage() const { return getNormalized() * _vRef; }
-  float getSmoothedVoltage() const { return getSmoothedNormalized() * _vRef; }
+  float getNormalized() const { return readNormalizedSmoothed(); }
+  float getVoltage() const { return getSmoothedNormalized() * _vRef; }
 
   float getKelvin() {
     float resistance = _readResistance();
@@ -244,28 +234,17 @@ class Phototransistor_Utils : public AnalogIn {
     }
 
     float getVoltage() const {
-      float v = readNormalized() * _vRef;
-      return _inverted ? (_vRef - v) : v;
-    }
-
-    float getSmoothedVoltage() const {
       float v = readNormalizedSmoothed() * _vRef;
       return _inverted ? (_vRef - v) : v;
     }
 
     float getLevel() const {
-      return (getVoltage() * _cal.scale) + _cal.offset;
-    }
-
-    float getLevelSmoothed() const {
       return (getSmoothedVoltage() * _cal.scale) + _cal.offset;
     }
 
-    // float getPercentage() const { return (getVoltage() / _vRef) * 100.0f; }
-    // float getPercentageSmoothed() const { return (getSmoothedVoltage() / _vRef) * 100.0f; }
-
-    float getPercentage() const { return readNormalized() * 100.0f; }
-    float getPercentageSmoothed() const { return readNormalizedSmoothed() * 100.0f; }
+    float getPercentage() const {
+      return (getSmoothedVoltage() / _vRef) * 100.0f;
+    }
 
     void setCalibration(float scale, float offset = 0.0f) {
       _cal.scale = scale;
